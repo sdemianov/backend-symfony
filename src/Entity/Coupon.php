@@ -21,8 +21,8 @@ class Coupon
     #[ORM\Column(length: 50, unique: true)]
     private ?string $code = null;
 
-    #[ORM\Column(length: 20)]
-    private ?string $type = null;
+    #[ORM\Column(length: 20, nullable: false)]
+    private string $type;
 
     #[ORM\Column(type: 'float')]
     private ?float $value = null;
@@ -43,13 +43,17 @@ class Coupon
         return $this;
     }
 
-    public function getType(): ?string
+    public function getType(): string
     {
         return $this->type;
     }
 
     public function setType(string $type): self
     {
+        if (!in_array($type, [self::TYPE_FIXED, self::TYPE_PERCENT])) {
+            throw new \InvalidArgumentException('Invalid coupon type');
+        }
+
         $this->type = $type;
         return $this;
     }
